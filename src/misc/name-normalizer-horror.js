@@ -1,3 +1,6 @@
+import { replaceSetter } from 'sinon'
+
+const hasMoreThanThreeParts = name => name.trim().split(' ').length > 3
 
 /* normalize the name by breaking into its
    constituent parts so that it can be put
@@ -31,7 +34,7 @@ export const normalizeName = (name) => {
       + (sx.length > 0 ? ',' + sx : '');
   }
   // less than 3 parts
-  else if (name.trim().split(' ').length > 3) {
+  else if (hasMoreThanThreeParts(name)) {
     const t = name.trim().split(' ');
     let l = t.slice(-1)[0];
     console.log('L: ', l);
