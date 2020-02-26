@@ -1,8 +1,7 @@
-export const value = (portfolio, service) => {
-  if (isEmpty(portfolio)) return 0
-
-  return service()
-}
+export const value = (portfolio, service) =>
+  Object.entries(portfolio.holdings).reduce(
+    (total, [symbol, shares]) => total + service(symbol) * shares
+    , 0)
 
 export const create = () => ({
   holdings: {}
@@ -14,17 +13,14 @@ const throwOnNonPositiveShares = shares => {
 
 export const purchase = (portfolio, symbol, shares) => {
   throwOnNonPositiveShares(shares)
-  return {
-    ...portfolio,
-    holdings: {
-      ...portfolio.holdings,
-      [symbol]: sharesOf(portfolio, symbol) + shares
-    }
-  }
+  return { ...portfolio,
+    holdings: { ...portfolio.holdings, [symbol]: sharesOf(portfolio, symbol) + shares } }
 }
 
 export const sharesOf = (portfolio, symbol) =>
-  isEmpty(portfolio) ? 0 : portfolio.holdings[symbol]
+  !(symbol in portfolio.holdings)
+    ? 0
+    : portfolio.holdings[symbol]
 
 export const isEmpty = portfolio => symbolCount(portfolio) === 0
 

@@ -1,6 +1,7 @@
 import * as Portfolio from './portfolio'
 
 const BayerCurrentValue = 19
+const IbmCurrentValue = 100
 
 describe('a portfolio', () => {
   let portfolio
@@ -51,6 +52,7 @@ describe('a portfolio', () => {
     newPortfolio = Portfolio.purchase(newPortfolio, 'AAPL', 42)
 
     expect(Portfolio.sharesOf(newPortfolio, 'IBM')).toBe(17)
+    expect(Portfolio.sharesOf(newPortfolio, 'AAPL')).toBe(42)
   })
 
   it('returns 0 for shares of symbol not purchased', () => {
@@ -69,17 +71,37 @@ describe('a portfolio', () => {
   })
 
   describe('my net worth', () => {
-    it('I am worthless when portfolio is empty', () => {
+    it('is nothing when portfolio is empty', () => {
       expect(Portfolio.value(portfolio)).toBe(0)
     })
 
-    it('is worth share price with single-share purchase', () => {
-      const stubStockService = symbol => BayerCurrentValue
+    it('is share price with single-share purchase', () => {
+      const stubStockService = _symbol => BayerCurrentValue
       const newPortfolio = Portfolio.purchase(portfolio, 'BAYN', 1)
 
       const value = Portfolio.value(newPortfolio, stubStockService)
 
       expect(value).toBe(BayerCurrentValue)
+    })
+
+    it('multiplies share price by # shares', () => {
+      const stubStockService = _symbol => BayerCurrentValue
+      const newPortfolio = Portfolio.purchase(portfolio, 'BAYN', 10)
+
+      const value = Portfolio.value(newPortfolio, stubStockService)
+
+      expect(value).toBe(BayerCurrentValue * 10)
+    })
+
+    it('accumulates symbol values', () => {
+      const stubStockService = symbol => symbol === 'BAYN' ? BayerCurrentValue : IbmCurrentValue
+      let newPortfolio = Portfolio.purchase(portfolio, 'BAYN', 10)
+      newPortfolio = Portfolio.purchase(newPortfolio, 'IBM', 20)
+
+      const value = Portfolio.value(newPortfolio, stubStockService)
+
+      expect(value).toBe(BayerCurrentValue * 10 +
+                        IbmCurrentValue * 20)
     })
   })
 })
