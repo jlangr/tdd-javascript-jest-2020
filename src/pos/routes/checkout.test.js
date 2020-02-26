@@ -50,7 +50,7 @@ describe('checkout routes', () => {
     })
 
     it('returns persisted checkout on get', () => {
-      getCheckout({ params: { id: checkoutId }}, response)
+      getCheckout({ params: { id: checkoutId } }, response)
 
       expectResponseSentToEqual(response, { id: checkoutId, items: [] })
     })
@@ -98,16 +98,16 @@ describe('checkout routes', () => {
   describe('scanning a member ID', () => {
     it('updates checkout with member data', () => {
       overrideRetrieveMember(() => ({ member: '719-287-4335', discount: 0.01, name: 'Jeff Languid' }))
-      postMember({ params: { id: checkoutId }, body: { id: '719-287-4335' }}, response)
+      postMember({ params: { id: checkoutId }, body: { id: '719-287-4335' } }, response)
       response = createEmptyResponse()
 
-      getCheckout({params: { id: checkoutId }}, response)
+      getCheckout({ params: { id: checkoutId } }, response)
 
       expectResponseSentToMatch(response, { member: '719-287-4335', discount: 0.01, name: 'Jeff Languid' })
     })
 
     it('returns error when checkout not found', () => {
-      postMember({ params: { id: 999 }, body: { id: 'unknown' }}, response)
+      postMember({ params: { id: 999 }, body: { id: 'unknown' } }, response)
 
       expect(response.status).toEqual(400)
       expectResponseSentToEqual(response, { error: 'invalid checkout' })
@@ -116,7 +116,7 @@ describe('checkout routes', () => {
     it('returns error when member not found', () => {
       overrideRetrieveMember(() => undefined)
 
-      postMember({ params: { id: checkoutId }, body: { id: 'anything' }}, response)
+      postMember({ params: { id: checkoutId }, body: { id: 'anything' } }, response)
 
       expect(response.status).toEqual(400)
       expectResponseSentToEqual(response, { error: 'unrecognized member' })
@@ -129,69 +129,90 @@ describe('checkout routes', () => {
     postItem({ params: { id: checkoutId }, body: { upc } }, response)
   }
 
-  const purchaseExemptItem = (upc, price, description='') => {
+  const purchaseExemptItem = (upc, price, description = '') => {
     purchaseItem(upc, price, description, true)
   }
 
-  const purchase = (upc, price, description='') => {
+  const purchase = (upc, price, description = '') => {
     purchaseItem(upc, price, description, false)
   }
 
   const scanMember = (id, discount, name = 'Jeff Languid') => {
     overrideRetrieveMember(() => ({ member: id, discount, name }))
     const response = createEmptyResponse()
-    postMember({ params: { id: checkoutId }, body: { id }}, response)
+    postMember({ params: { id: checkoutId }, body: { id } }, response)
   }
 
+  let postItemWithBackendData = function (upc, price) {
+    overrideRetrieveItem(() => ({ upc: upc, price: price, description: '', exempt: false }))
+    postItem({ params: { id: checkoutId }, body: { upc } }, response)
+  }
   /*
-   * The tests below need some work.
-   *
-   * Things to emphasize:
-   * - AAA. Once you get used to it, it's sorely missed.
-   * - Single behavior tests
-   * - "Self-contained reading"
-   * - Abstraction: Emphasize the essential, eliminate the irrelevant
-   *
-   * Some other things to look for:
-   * - Consistent names
-   * - Eliminate junk like console logging, comments
-   * - Duplication / stepwise presentation
-   *
-   * Should the checkout totaling code even reside in checkouts.js?
-   */
+     * The tests below need some work.
+     *
+     * Things to emphasize:
+     * - AAA. Once you get used to it, it's sorely missed.
+     * - Single behavior tests
+     * - "Self-contained reading"
+     * - Abstraction: Emphasize the essential, eliminate the irrelevant
+     *
+     * Some other things to look for:
+     * - Consistent names
+     * - Eliminate junk like console logging, comments
+     * - Duplication / stepwise presentation
+     *
+     * Should the checkout totaling code even reside in checkouts.js?
+     */
   describe('checkout total', () => {
-    beforeEach(() => response = createEmptyResponse())
 
-    it('does stuff', () => {
-      IncrementingIdGenerator.reset(checkoutId)
-      postCheckout({}, response)
-      overrideRetrieveItem(() => {})
-      // set up for discountng
-      overrideRetrieveItem(() => ({ upc: '333', price: 3.33, description: '', exempt: false }))
-      postItem({ params: { id: checkoutId }, body: { upc: '333' } }, response)
-      overrideRetrieveItem(() => {})
-      console.log('req id', checkoutId )
-      overrideRetrieveItem(() => ({ upc: '444', price: 4.44, description: '', exempt: false }))
-      postItem({ params: { id: checkoutId }, body: { upc: '444' } }, response)
-      overrideRetrieveItem(() => {})
-      const request = { params: { id: checkoutId }}
+    describe('given posted items', () => {
+      let response
+      beforeEach(() => {
+        response = createEmptyResponse()
+        IncrementingIdGenerator.reset(checkoutId)
+        postItemWithBackendData('333', 3.00)
+        postItemWithBackendData('444', 4.00)
+      })
+
+      describe('when a checkout total is requested', () => {
+        beforeEach(() =>
+          postCheckoutTotal({ params: { id: checkoutId } }, response))
+
+        it('returns success status', () =>
+          expect(response.status).toEqual(200))
+
+        it('returns response with total of items', () =>
+          expectResponseSentToMatch(response, { total: 7.00 }))
+      })
+    })
+
+    describe('given a checkout', () => {
+      beforeEach(() => {
+        response = createEmptyResponse()
+      })
+
+      describe('when a checkout total is requested for an invalid ID', () => {
+        beforeEach(() => postCheckoutTotal({ params: { id: 'unknown' } }, response))
+
+        it('returns error status', () => {
+          expect(response.status).toEqual(400)
+        })
+
+        it('returns appropriate error message', () => {
+          expect(response.send).toHaveBeenCalledWith({ error: 'nonexistent checkout' })
+        })
+      })
+    })
+
+    beforeEach(() => {
       response = createEmptyResponse()
-      postCheckoutTotal(request, response)
-      expect(response.status).toEqual(200)
-      console.log('reseponse status', response.status)
-      const firstCallFirstArg = response.send.mock.calls[0][0]
-      expect(firstCallFirstArg).toMatchObject({ total: 7.77 })
-      //  not found
-      postCheckoutTotal({ params: { id: 'unknown' }}, response)
-      expect(response.status).toEqual(400)
-      expect(response.send).toHaveBeenCalledWith({ error: 'nonexistent checkout' })
     })
 
     it('applies any member discount', () => {
       scanMember('719-287-4335', 0.25)
       purchase('333', 3.33)
       purchase('444', 4.44)
-      postCheckoutTotal({ params: { id: checkoutId }}, response)
+      postCheckoutTotal({ params: { id: checkoutId } }, response)
       expectResponseSentToMatch(response, { total: 5.83 })
     })
 
@@ -200,7 +221,7 @@ describe('checkout routes', () => {
       purchase('333', 4.40)
       purchaseExemptItem('444', 5.50)
       response = createEmptyResponse()
-      postCheckoutTotal({ params: { id: checkoutId }}, response)
+      postCheckoutTotal({ params: { id: checkoutId } }, response)
       expectResponseSentToMatch(response, { total: 9.53 })
     })
 
@@ -208,8 +229,8 @@ describe('checkout routes', () => {
       purchaseExemptItem('444', 6.00)
       scanMember('719-287-4335', 0.10)
       purchase('333', 4.00)
-      postCheckoutTotal({ params: { id: checkoutId }}, response)
-      expectResponseSentToMatch(response, { totalOfDiscountedItems:  3.60 })
+      postCheckoutTotal({ params: { id: checkoutId } }, response)
+      expectResponseSentToMatch(response, { totalOfDiscountedItems: 3.60 })
       // amount saved
       IncrementingIdGenerator.reset(1001)
       postCheckout({}, response)
@@ -217,15 +238,15 @@ describe('checkout routes', () => {
       purchase('333', 4.00)
       purchase('444', 6.00)
       response = createEmptyResponse()
-      postCheckoutTotal({ params: { id: checkoutId }}, response)
-      expectResponseSentToMatch(response, { /* totalOfDiscountedItems*/totalSaved:  1.00 })
+      postCheckoutTotal({ params: { id: checkoutId } }, response)
+      expectResponseSentToMatch(response, { /* totalOfDiscountedItems*/totalSaved: 1.00 })
     })
 
     it('provides 0 total for discounted items when no member scanned', () => {
       postCheckout({}, createEmptyResponse())
       purchase('333', 4.00)
-      postCheckoutTotal({ params: { id: checkoutId }}, response)
-      expectResponseSentToMatch(response, { totalOfDiscountedItems :   0.00 })
+      postCheckoutTotal({ params: { id: checkoutId } }, response)
+      expectResponseSentToMatch(response, { totalOfDiscountedItems: 0.00 })
     })
 
     it('provides 0 total for discounted items when member discount is 0', () => {
@@ -233,8 +254,8 @@ describe('checkout routes', () => {
       postCheckout({}, createEmptyResponse())
       scanMember('719-287-4335', 0.00)
       purchase('333', 4.00)
-      postCheckoutTotal({ params: { id: checkoutId }}, response)
-      expectResponseSentToMatch(response, { totalOfDiscountedItems :   0.00 })
+      postCheckoutTotal({ params: { id: checkoutId } }, response)
+      expectResponseSentToMatch(response, { totalOfDiscountedItems: 0.00 })
     })
   })
 
@@ -250,10 +271,12 @@ describe('checkout routes', () => {
 
       postCheckoutTotal({ params: { id: checkoutId } }, response)
 
-      expectResponseSentToMatch(response, { messages:
+      expectResponseSentToMatch(response, {
+        messages:
           ['Milk                                     5.00',
             'Fancy eggs                              12.00',
-            'TOTAL                                   17.00' ]})
+            'TOTAL                                   17.00']
+      })
     })
 
     it('includes discounts and total saved', () => {
@@ -263,13 +286,15 @@ describe('checkout routes', () => {
 
       postCheckoutTotal({ params: { id: checkoutId } }, response)
 
-      expectResponseSentToMatch(response, { messages:
+      expectResponseSentToMatch(response, {
+        messages:
           ['Milk                                     5.00',
             '   10% mbr disc                         -0.50',
             'Eggs                                     2.79',
             '   10% mbr disc                         -0.28',
             'TOTAL                                    7.01',
-            '*** You saved:                           0.78' ] })
+            '*** You saved:                           0.78']
+      })
     })
   })
 })

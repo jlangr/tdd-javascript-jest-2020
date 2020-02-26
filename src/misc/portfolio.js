@@ -1,3 +1,9 @@
+export const value = (portfolio, service) => {
+  if (isEmpty(portfolio)) return 0
+
+  return service()
+}
+
 export const create = () => ({
   holdings: {}
 })

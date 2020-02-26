@@ -1,5 +1,7 @@
 import * as Portfolio from './portfolio'
 
+const BayerCurrentValue = 19
+
 describe('a portfolio', () => {
   let portfolio
   beforeEach(() => portfolio = Portfolio.create())
@@ -64,5 +66,20 @@ describe('a portfolio', () => {
 
   it('throws on purchase of non-positive shares', () => {
     expect(() => Portfolio.purchase(portfolio, 'IBM', -1)).toThrow(RangeError)
+  })
+
+  describe('my net worth', () => {
+    it('I am worthless when portfolio is empty', () => {
+      expect(Portfolio.value(portfolio)).toBe(0)
+    })
+
+    it('is worth share price with single-share purchase', () => {
+      const stubStockService = symbol => BayerCurrentValue
+      const newPortfolio = Portfolio.purchase(portfolio, 'BAYN', 1)
+
+      const value = Portfolio.value(newPortfolio, stubStockService)
+
+      expect(value).toBe(BayerCurrentValue)
+    })
   })
 })
