@@ -1,4 +1,5 @@
 import * as Portfolio from './portfolio'
+import { when } from 'jest-when'
 
 const BayerCurrentValue = 19
 const IbmCurrentValue = 100
@@ -94,7 +95,9 @@ describe('a portfolio', () => {
     })
 
     it('accumulates symbol values', () => {
-      const stubStockService = symbol => symbol === 'BAYN' ? BayerCurrentValue : IbmCurrentValue
+      const stubStockService = jest.fn()
+      when(stubStockService).calledWith('BAYN').mockReturnValue(BayerCurrentValue)
+      when(stubStockService).calledWith('IBM').mockReturnValue(IbmCurrentValue)
       let newPortfolio = Portfolio.purchase(portfolio, 'BAYN', 10)
       newPortfolio = Portfolio.purchase(newPortfolio, 'IBM', 20)
 
