@@ -7,6 +7,8 @@ const parts = name => name.split(' ')
 
 const isMononym = name => parts(name).length === 1
 
+const makeMiddles = names => names.map(name => name.length === 1 ? name : `${name[0]}`)
+
 const removeWhitespace = name => name.trim()
 
 export const normalize = name => {
@@ -15,6 +17,5 @@ export const normalize = name => {
   const nameParts = parts(trimmedName)
   const firstName = nameParts.shift()
   const lastName = nameParts.pop()
-  const middleName = nameParts.map(m => m.length === 1 ? m: `${m[0]}.`)
-  return [lastName + ',', firstName, ...middleName].join(' ')
+  return [`${lastName},`, firstName, ...makeMiddles(nameParts)].join(' ')
 }

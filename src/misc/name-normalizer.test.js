@@ -35,4 +35,10 @@ describe('a name normalizer', () => {
     expect(normalize('Julia Scarlett Elizabeth Dreyfus')).toEqual('Dreyfus, Julia S. E.')
   })
 
+  //has suffix
+  // Martin Luther King, Jr. => King, Martin L., Jr
+  it('has suffix', () => {
+    expect(normalize('Martin Luther King, Jr.')).toEqual('King, Martin L., Jr')
+  })
 })
+
