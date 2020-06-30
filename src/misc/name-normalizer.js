@@ -11,8 +11,15 @@ const first = name => parts(name)[0]
 
 const isMononym = name => parts(name).length === 1
 
+const hasMiddleName = name => parts(name).length === 3
+
+const middleInitial = name => parts(name)[2].slice(0, 1) + "."
+
 export const normalize = name => {
   const trimmed = name.trim()
   if (isMononym(trimmed)) return trimmed
+  if (hasMiddleName(trimmed)) {
+    return `${last(trimmed)}, ${first(trimmed)} ${middleInitial(trimmed)}`
+  }
   return `${last(trimmed)}, ${first(trimmed)}`
 }

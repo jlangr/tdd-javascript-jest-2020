@@ -16,4 +16,8 @@ describe('a name normalizer', () => {
   it('trims leading and trailing whitespace', () => {
     expect(normalize('  Big Boi   ')).toEqual('Boi, Big')
   })
+
+  it('initializes middle name', () => {
+    expect(normalize("Alpha Beta Gamma")).toEqual("Gamma, Alpha B.")
+  })
 })
