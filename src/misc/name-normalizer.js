@@ -5,17 +5,16 @@
 
 const parts = name => name.split(' ')
 
-cconst isMononym = name => parts(name).length === 1
+const isMononym = name => parts(name).length === 1
 
 const removeWhitespace = name => name.trim()
 
 export const normalize = name => {
   if (isMononym(name)) return name
   const trimmedName = removeWhitespace(name)
-  const [firstName, second, third] = parts(trimmedName)
-  if(third) {
-    const middleName = second.length === 1 ? second : `${second[0]}.`
-    return `${third}, ${firstName} ${middleName}`
-  }
-  return `${second}, ${firstName}`
+  const nameParts = parts(trimmedName)
+  const firstName = nameParts.shift()
+  const lastName = nameParts.pop()
+  const middleName = nameParts.map(m => m.length === 1 ? m: `${m[0]}.`)
+  return [lastName + ',', firstName, ...middleName].join(' ')
 }

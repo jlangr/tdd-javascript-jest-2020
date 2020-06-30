@@ -30,6 +30,9 @@ describe('a name normalizer', () => {
   })
 
   //has multiple middle names
-  //J
+  //Julia Scarlett Elizabeth Dreyfus => Dreyfus, Julia S. E.
+  it('has multiple middle names', () => {
+    expect(normalize('Julia Scarlett Elizabeth Dreyfus')).toEqual('Dreyfus, Julia S. E.')
+  })
 
 })
