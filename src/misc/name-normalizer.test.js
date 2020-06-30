@@ -28,4 +28,8 @@ describe('a name normalizer', () => {
   it('multiple middle names', () => {
     expect(normalize("Alpha Beta Gamma Delta")).toEqual("Delta, Alpha B. G.")
   })
+
+  it('multiple middle names', () => {
+    expect(normalize("Alpha S S Delta")).toEqual("Delta, Alpha S S")
+  })
 })
