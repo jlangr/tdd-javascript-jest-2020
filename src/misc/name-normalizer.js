@@ -3,9 +3,10 @@
 //const numberOfCharactersInString = (s, char) =>
 //  (s.match(new RegExp(char, 'g'))||[]).length;
 
+
 const parts = name => name.split(' ')
 
-const last = name => parts(name)[1]
+const last = name => parts(name)[parts(name).length - 1]
 
 const first = name => parts(name)[0]
 
@@ -13,7 +14,7 @@ const isMononym = name => parts(name).length === 1
 
 const hasMiddleName = name => parts(name).length === 3
 
-const middleInitial = name => parts(name)[2].slice(0, 1) + "."
+const middleInitial = name => parts(name)[parts(name).length - 2].slice(0, 1) + "."
 
 export const normalize = name => {
   const trimmed = name.trim()
