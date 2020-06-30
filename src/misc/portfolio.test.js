@@ -46,4 +46,13 @@ describe('a portfolio', () => {
 
     expect(Portfolio.uniqueSymbolCount(updatedPortfolio)).toEqual(1)
   })
+
+  it('count shares', () => {
+    let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN', 2)
+    updatedPortfolio = Portfolio.purchase(updatedPortfolio, 'BAYN', 2)
+
+    expect(Portfolio.countShares(updatedPortfolio)).toEqual(4)
+  })
+
+
 })
