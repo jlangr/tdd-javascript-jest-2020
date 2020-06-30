@@ -12,6 +12,7 @@ const first = name => parts(name)[0]
 const isMononym = name => parts(name).length === 1
 
 export const normalize = name => {
+  name= name.trim()
   if (isMononym(name)) return name
   return `${last(name)}, ${first(name)}`
 }
