@@ -25,6 +25,11 @@ describe('a name normalizer', () => {
 
   //does not intialize one-letter middle name
   //Harry S Truman => Truman, Harry S
+  it('does not intialize one-letter middle name', () => {
+    expect(normalize('Harry S Truman')).toEqual('Truman, Harry S')
+  })
 
+  //has multiple middle names
+  //J
 
 })
