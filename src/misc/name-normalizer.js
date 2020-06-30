@@ -14,7 +14,8 @@ const removeWhitespace = name => name.trim()
 export const normalize = name => {
   if (isMononym(name)) return name
   const trimmedName = removeWhitespace(name)
-  const nameParts = parts(trimmedName)
+  const [names, suffix] = trimmedName.split(',')
+  const nameParts = parts(names)
   const firstName = nameParts.shift()
   const lastName = nameParts.pop()
   return [`${lastName},`, firstName, ...makeMiddles(nameParts)].join(' ')
