@@ -13,7 +13,18 @@ describe('a name normalizer', () => {
     expect(normalize('Haruki Murakami')).toEqual('Murakami, Haruki')
   })
 
-  xit('trims leading and trailing whitespace', () => {
+  it('trims leading and trailing whitespace', () => {
     expect(normalize('  Big Boi   ')).toEqual('Boi, Big')
   })
+
+  //initializes middle name
+  //shannon marie griffin => griffin, shannon m.
+  it('initializes middle name', () => {
+    expect(normalize('Shannon Marie Griffin')).toEqual('Griffin, Shannon M.')
+  })
+
+  //does not intialize one-letter middle name
+  //Harry S Truman => Truman, Harry S
+
+
 })
