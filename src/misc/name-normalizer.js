@@ -11,6 +11,8 @@ const makeMiddles = names => names.map(name => name.length === 1 ? name : `${nam
 
 const removeWhitespace = name => name.trim()
 
+const getSuffix = name => name ? `, ${name}.` : '';
+
 export const normalize = name => {
   if (isMononym(name)) return name
   const trimmedName = removeWhitespace(name)
@@ -18,5 +20,5 @@ export const normalize = name => {
   const nameParts = parts(names)
   const firstName = nameParts.shift()
   const lastName = nameParts.pop()
-  return [`${lastName},`, firstName, ...makeMiddles(nameParts)].join(' ')
+  return [`${lastName},`, firstName, ...makeMiddles(nameParts)].join(' ') + getSuffix(suffix)
 }
