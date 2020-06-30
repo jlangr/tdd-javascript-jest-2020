@@ -1,11 +1,13 @@
-export const uniqueSymbolCount = portfolio =>
-    portfolio.uniqueSymbolCount
+export const uniqueSymbolCount = portfolio => {
+    return Object.keys(portfolio).length
+}
 
-export const createPortfolio = () => ({ uniqueSymbolCount: 0 })
+export const createPortfolio = () => ({})
 
-export const isEmpty = portfolio => portfolio.uniqueSymbolCount === 0
+export const isEmpty = portfolio => uniqueSymbolCount(portfolio) === 0
 
-export const purchase = portfolio => {
+export const purchase = (portfolio, token) => {
     return { ...portfolio,
-        uniqueSymbolCount: portfolio.uniqueSymbolCount + 1 }
+        [token]: token
+    }
 }
