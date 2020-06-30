@@ -11,16 +11,7 @@ const first = name => parts(name)[0]
 
 const isMononym = name => parts(name).length === 1
 
-const removeWhitespace = name => name.trim()
-
 export const normalize = name => {
   if (isMononym(name)) return name
-  const trimmedName = removeWhitespace(name)
-  const [first, second, third] = parts(trimmedName)
-  if(third) {
-    const middleName = second.length === 1
-    return `${lastName}, ${firstName} ${}`
-  }
-  const lastName = third ? third : second
-  return `${lastName}, ${firstName} ${middleName}`
+  return `${last(name)}, ${first(name)}`
 }
