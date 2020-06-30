@@ -14,14 +14,18 @@ const isMononym = nameArray => nameArray.length === 1
 
 const hasMiddleName = nameArray => nameArray.length > 2
 
+const reducer = (accumulator, currentValue) => {
+  return accumulator + (currentValue.length === 1)
+      ? currentValue
+      : currentValue.slice(0, 1) + "."
+}
+
 const middleInitial = nameArray => {
   const middleNames = nameArray.slice(1, nameArray.length -1)
 
   // TODO reduce middleNames based on below logic
-  const middleName = nameArray[nameArray - 2];
-  return (middleName.length === 1)
-      ? middleName
-      : middleName.slice(0, 1) + "."
+  
+  
 }
 
 export const normalize = name => {
