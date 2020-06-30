@@ -16,10 +16,10 @@ const removeWhitespace = name => name.trim()
 export const normalize = name => {
   if (isMononym(name)) return name
   const trimmedName = removeWhitespace(name)
-  const [first, second, third] = parts(trimmedName)
+  const [firstName, second, third] = parts(trimmedName)
   if(third) {
-    const middleName = second.length === 1
-    return `${lastName}, ${firstName} ${}`
+    const middleName = second.length === 1 ? second : `${second[0]}.`
+    return `${third}, ${firstName} ${middleName}`
   }
   const lastName = third ? third : second
   return `${lastName}, ${firstName} ${middleName}`
