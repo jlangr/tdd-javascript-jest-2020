@@ -20,4 +20,8 @@ describe('a name normalizer', () => {
   it('initializes middle name', () => {
     expect(normalize("Alpha Beta Gamma")).toEqual("Gamma, Alpha B.")
   })
+
+  it('no period middle name', () => {
+    expect(normalize("Harry S Truman")).toEqual("Truman, Harry S")
+  })
 })
