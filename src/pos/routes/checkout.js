@@ -67,7 +67,7 @@ export const postItem = (request, response) => {
 
 const LineWidth = 45
 
-const itemTotal = (item, totalOfDiscountedItems, total, totalSaved, discount, messages) => {
+const itemTotal = (item, {totalOfDiscountedItems, total, totalSaved, discount, messages} ) => {
   let price = item.price
   const isExempt = item.exempt
   if (!isExempt && discount > 0) {
@@ -94,6 +94,7 @@ const itemTotal = (item, totalOfDiscountedItems, total, totalSaved, discount, me
     messages.push(`${pad(text, textWidth)}${discountFormatted}`)
 
     totalSaved += discountAmount
+
   }
   else {
     total += price
@@ -104,6 +105,7 @@ const itemTotal = (item, totalOfDiscountedItems, total, totalSaved, discount, me
     const textWidth = LineWidth - amountWidth
     messages.push(pad(text, textWidth) + amount)
   }
+  return {totalOfDiscountedItems, total, totalSaved, discount, messages}
 }
 
 function formatMessage(formattedTotal, messages) {
@@ -129,7 +131,7 @@ export const postCheckoutTotal = (request, response) => {
   let total = 0
   let totalSaved = 0
 
-  checkout.items.forEach(item => itemTotal(item, totalOfDiscountedItems, total, totalSaved, discount, messages))
+  checkout.items.forEach(item => {{totalOfDiscountedItems, total, totalSaved, discount, messages} = itemTotal(item, {totalOfDiscountedItems, total, totalSaved, discount, messages})})
 
   total = Math.round(total * 100) / 100
 
