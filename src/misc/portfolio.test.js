@@ -118,5 +118,13 @@ describe('a portfolio', () => {
 
       expect(Portfolio.value(updatedPortfolio, stockLookupFunction)).toEqual(BAYER_CURRENT_VALUE)
     })
+
+    it('share price on multiple-share purchase', () => {
+      const stockLookupFunction = _symbol => BAYER_CURRENT_VALUE
+
+      let updatedPortfolio = Portfolio.purchase(portfolio, BAYER, 2)
+
+      expect(Portfolio.value(updatedPortfolio, stockLookupFunction)).toEqual(BAYER_CURRENT_VALUE * 2)
+    });
   })
 })
