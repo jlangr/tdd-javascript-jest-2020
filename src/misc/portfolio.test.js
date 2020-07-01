@@ -105,6 +105,7 @@ describe('a portfolio', () => {
   })
 
   const BAYER_CURRENT_VALUE = 18
+  const APPLE_CURRENT_VALUE = 348
 
   describe('a portfolio is worth', () => {
     it('nothing when empty', () => {
@@ -119,12 +120,19 @@ describe('a portfolio', () => {
       expect(Portfolio.value(updatedPortfolio, stockLookupFunction)).toEqual(BAYER_CURRENT_VALUE)
     })
 
-    it('share price on single-share purchase', () => {
+    it('share price on two-share purchase', () => {
         const stockLookupFunction = _symbol => BAYER_CURRENT_VALUE
   
         let updatedPortfolio = Portfolio.purchase(portfolio, BAYER, 2)
   
         expect(Portfolio.value(updatedPortfolio, stockLookupFunction)).toEqual(BAYER_CURRENT_VALUE*2)
-      })
+    })
+
+    it('share price on multiple holdings', () => {
+      const stockLookupFunction = _symbol => _symbol === "BAYN" ? BAYER_CURRENT_VALUE : APPLE_CURRENT_VALUE
+      let updatedPortfolio = Portfolio.purchase(portfolio, BAYER, 1)
+      updatedPortfolio = Portfolio.purchase(portfolio, APPLE, 1)
+
+    })
   })
 })

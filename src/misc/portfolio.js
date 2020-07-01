@@ -37,4 +37,4 @@ export const sharesOf = (portfolio, symbol) =>
   !(symbol in portfolio.holdings) ? 0 : portfolio.holdings[symbol]
 
 export const value = (portfolio, stockService) =>
-  isEmpty(portfolio) ? 0 : stockService()
+  isEmpty(portfolio) ? 0 : stockService() * sharesOf(portfolio, "BAYN");
