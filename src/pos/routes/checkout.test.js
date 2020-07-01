@@ -177,10 +177,8 @@ describe('checkout routes', () => {
       postCheckoutTotal(request, response)
 
       expect(response.status).toEqual(200)
-      expect(response.send).toHaveBeenCalledWith({ total: 7.77 })
-
-      // const firstCallFirstArg = response.send.mock.calls[0][0]
-      // expect(firstCallFirstArg).toMatchObject({ total: 7.77 })
+      const firstCallFirstArg = response.send.mock.calls[0][0]
+      expect(firstCallFirstArg).toMatchObject({ total: 7.77 })
     })
 
     it('returns 400 when calculating total for non-existent checkout', () => {
