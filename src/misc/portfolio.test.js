@@ -40,10 +40,25 @@ describe('a portfolio', () => {
         })
     })
 
-    it('count does not increment when purchasing same symbol as already purchased', () => {
-        let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN')
-        updatedPortfolio = Portfolio.purchase(updatedPortfolio, 'BAYN')
+    describe( 'share tracking', () => {
+        it('count does not increment when purchasing same symbol as already purchased', () => {
+            let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN')
+            updatedPortfolio = Portfolio.purchase(updatedPortfolio, 'BAYN')
 
-        expect(Portfolio.uniqueSymbolCount(updatedPortfolio)).toEqual(1)
+            expect(Portfolio.uniqueSymbolCount(updatedPortfolio)).toEqual(1)
+        })
+
+        it ('gets 0 for shares never bought', () => {
+
+            expect(Portfolio.getShares(portfolio, 'AAPL')).toEqual(0)
+        })
+
+        it('gets numbers of shares bought', () => {
+            let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN')
+
+            expect(Portfolio.getShares(updatedPortfolio, 'BAYN')).toEqual(1)
+        })
     })
+
+
 })
