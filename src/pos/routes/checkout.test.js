@@ -176,15 +176,19 @@ describe('checkout routes', () => {
       response = createEmptyResponse()
       postCheckoutTotal(request, response)
 
+      function addRoundMoney(arg) {
+        return Math.round( arg*100 ) /100
+
+      }
+
       expect(response.status).toEqual(200)
-      const firstCallFirstArg = response.send.mock.calls[0][0]
-      expect(firstCallFirstArg).toMatchObject({ total: 7.77 })
+      expectResponseSentToMatch(response, { total: roundMoney(3.33) + roundMoney(4.44) })
     })
 
     it('returns 400 when calculating total for non-existent checkout', () => {
       postCheckoutTotal({ params: { id: 'unknown' }}, response)
       expect(response.status).toEqual(400)
-      expect(response.send).toHaveBeenCalledWith({ error: 'nonexistent checkout' })
+      expectResponseSentToEqual(response, { error: 'nonexistent checkout' })
     });
 
     it('applies any member discount', () => {
