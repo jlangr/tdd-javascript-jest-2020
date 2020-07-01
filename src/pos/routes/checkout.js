@@ -125,17 +125,10 @@ export const postCheckoutTotal = (request, response) => {
   total = Math.round(total * 100) / 100
 
   // append total line
-  const formattedTotal = checkoutAmountParser(total)
-  const formattedTotalWidth = formattedTotal.length
-  const textWidth = LineWidth - formattedTotalWidth
-  messages.push(pad('TOTAL', textWidth) + formattedTotal)
-
+  addFormatMessage(total, messages, "TOTAL")
+  
   if (totalSaved > 0) {
-    const formattedTotal = checkoutAmountParser(totalSaved)
-    console.log(`formattedTotal: ${formattedTotal}`)
-    const formattedTotalWidth = formattedTotal.length
-    const textWidth = LineWidth - formattedTotalWidth
-    messages.push(pad('*** You saved:', textWidth) + formattedTotal)
+    addFormatMessage(totalSaved, messages, "*** You saved:")
   }
 
   totalOfDiscountedItems = Math.round(totalOfDiscountedItems * 100) / 100
@@ -146,6 +139,13 @@ export const postCheckoutTotal = (request, response) => {
   // send total saved instead
   response.send({ id: checkoutId, total, totalOfDiscountedItems, messages, totalSaved })
 }
+function addFormatMessage(total, messages, txt) {
+  const formattedTotal = checkoutAmountParser(total)
+  const formattedTotalWidth = formattedTotal.length
+  const textWidth = LineWidth - formattedTotalWidth
+  messages.push(pad(txt, textWidth) + formattedTotal)
+}
+
 function checkoutAmountParser(price) {
   return parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
 }
