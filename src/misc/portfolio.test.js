@@ -1,3 +1,4 @@
+import {when} from 'jest-when'
 import * as Portfolio from './portfolio'
 import {createPortfolio} from './portfolio'
 
@@ -107,14 +108,18 @@ describe('a portfolio', () => {
   const BAYER_CURRENT_VALUE = 18
   const APPLE_CURRENT_VALUE = 348
 
+  const stockLookupFunction = jest.fn()
+  when(stockLookupFunction).calledWith(APPLE).mockReturnValue(APPLE_CURRENT_VALUE)
+  when(stockLookupFunction).calledWith(BAYER).mockReturnValue(BAYER_CURRENT_VALUE)
+
+
   describe('a portfolio is worth', () => {
     it('nothing when empty', () => {
       expect(Portfolio.value(portfolio)).toEqual(0)
     })
 
     it('share price on single-share purchase', () => {
-      const stockLookupFunction = _symbol => BAYER_CURRENT_VALUE
-
+      
       let updatedPortfolio = Portfolio.purchase(portfolio, BAYER, 1)
 
       expect(Portfolio.value(updatedPortfolio, stockLookupFunction)).toEqual(BAYER_CURRENT_VALUE)
