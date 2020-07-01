@@ -6,3 +6,8 @@ export const purchase = (portfolio, symbolName, symbolShares) => {
   portfolio.set(symbolName, symbolShareCount(portfolio, symbolName) + symbolShares)
   return portfolio
 }
+
+export const sell = (portfolio, symbolName, sharesSold)=>{
+  portfolio.set(symbolName, symbolShareCount(portfolio,symbolName)-sharesSold)
+  return portfolio
+}

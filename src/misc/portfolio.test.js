@@ -61,5 +61,13 @@ describe('a portfolio', () => {
     expect(Portfolio.symbolShareCount(updatedPortfolio, 'BAYN')).toEqual(1)
     expect(Portfolio.symbolShareCount(updatedPortfolio, 'AAPL')).toEqual(2)
   });
+  it('decrement count when share is sold', () => {
+    let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN', 1)
+    updatedPortfolio = Portfolio.sell(portfolio, 'BAYN', 1)
+    expect(Portfolio.symbolShareCount(updatedPortfolio, 'BAYN')).toEqual(0)
+
+
+  });
+
 
 })
