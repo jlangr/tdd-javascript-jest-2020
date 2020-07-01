@@ -47,10 +47,19 @@ describe('a portfolio', () => {
     expect(Portfolio.uniqueSymbolCount(updatedPortfolio)).toEqual(1)
   })
 
-  it('count increments by number of symbols purchased', () => {
+  it('count increments by number of same symbols purchased', () => {
     let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN', 1)
     updatedPortfolio = Portfolio.purchase(updatedPortfolio, 'BAYN', 2)
 
     expect(Portfolio.symbolShareCount(updatedPortfolio, 'BAYN')).toEqual(3)
   });
+  
+  it('count increments by number of different symbols purchased', () => {
+    let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN', 1)
+    updatedPortfolio = Portfolio.purchase(updatedPortfolio, 'AAPL', 2)
+
+    expect(Portfolio.symbolShareCount(updatedPortfolio, 'BAYN')).toEqual(1)
+    expect(Portfolio.symbolShareCount(updatedPortfolio, 'AAPL')).toEqual(2)
+  });
+
 })
