@@ -160,44 +160,28 @@ describe('checkout routes', () => {
    * Should the checkout totaling code even reside in checkouts.js?
    */
   describe('checkout total', () => {
-    beforeEach(() => {response = createEmptyResponse()})
-    it('does stuff', () => {
+    beforeEach(() => {
+      response = createEmptyResponse()
       IncrementingIdGenerator.reset(checkoutId)
       postCheckout({}, response)
-      // set up for discountng
-      overrideRetrieveItem(() => ({ upc: '333', price: 3.33, description: '', exempt: false }))
-      postItem({ params: { id: checkoutId }, body: { upc: '333' } }, response)
-      console.log('req id', checkoutId )
+    })
 
-      overrideRetrieveItem(() => ({ upc: '444', price: 4.44, description: '', exempt: false }))
-      postItem({ params: { id: checkoutId }, body: { upc: '444' } }, response)
-      const request = { params: { id: checkoutId }}
-      response = createEmptyResponse()
-      postCheckoutTotal(request, response)
-      expect(response.status).toEqual(200)//check for valid ID
-      console.log('reseponse status', response.status)
-      const firstCallFirstArg = response.send.mock.calls[0][0]
-      expect(firstCallFirstArg).toMatchObject({ total: 7.77 })//check final total
+    it('does stuff', () => {
       //  not found
       postCheckoutTotal({ params: { id: 'unknown' }}, response)
       expect(response.status).toEqual(400)
       expect(response.send).toHaveBeenCalledWith({ error: 'nonexistent checkout' })
     })
-    it('totals two items when posted',()=>{
-      IncrementingIdGenerator.reset(checkoutId)
-      postCheckout({}, response)
-      // set up for discountng
+  
+    it.only('totals two items when posted',()=>{
       overrideRetrieveItem(() => ({ upc: '333', price: 3.33, description: '', exempt: false }))
       postItem({ params: { id: checkoutId }, body: { upc: '333' } }, response)
-      console.log('req id', checkoutId )
-
       overrideRetrieveItem(() => ({ upc: '444', price: 4.44, description: '', exempt: false }))
       postItem({ params: { id: checkoutId }, body: { upc: '444' } }, response)
       const request = { params: { id: checkoutId }}
       response = createEmptyResponse()
       postCheckoutTotal(request, response)
       expect(response.status).toEqual(200)//check for valid ID
-      console.log('reseponse status', response.status)
       const firstCallFirstArg = response.send.mock.calls[0][0]
       expect(firstCallFirstArg).toMatchObject({ total: 7.77 })//check final total
     })
