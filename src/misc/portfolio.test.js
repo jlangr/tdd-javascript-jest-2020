@@ -66,10 +66,26 @@ describe('a portfolio', () => {
     expect(Portfolio.countShares(updatedPortfolio, "BAYN")).toEqual(1)
   });
 
-  // throw error when selling more shares than available
-  it('should ', () => {
+  it('should throw error when selling more shares than available', function () {
+    let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN', 1)
     
+    expect(() => Portfolio.sell(updatedPortfolio, 'BAYN', 2)).toThrow();
   });
 
-  // decrease unique symbol count when all shares of a symbol are sold
+  it('decrease unique symbol count when all shares of a symbol are sold', () => {
+    let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN', 2)
+
+    expect(Portfolio.uniqueSymbolCount(updatedPortfolio)).toEqual(1)
+
+    const numberOfSymbols = Portfolio.uniqueSymbolCount(updatedPortfolio)
+
+    updatedPortfolio = Portfolio.sell(updatedPortfolio, 'BAYN', 2)
+
+    expect(Portfolio.uniqueSymbolCount(updatedPortfolio)).toBeLessThan(numberOfSymbols)
+
+
+
+
+  });
+
 })

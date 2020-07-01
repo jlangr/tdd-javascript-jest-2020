@@ -18,6 +18,8 @@ export const purchase = (portfolio, symbol, quantity) => {
 
 export const sell = (portfolio, symbol, quantity) => {
   let newQuantity = portfolio[symbol].quantity - quantity
+  if (newQuantity < 0) throw new Error("Selling more shares than available")
+  
   return { ...portfolio, [symbol]: { quantity: newQuantity } }
 }
 
