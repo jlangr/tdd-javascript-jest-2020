@@ -54,5 +54,7 @@ describe('a portfolio', () => {
     expect(Portfolio.countShares(updatedPortfolio, "BAYN")).toEqual(4)
   })
 
-
+  it('should throw RangeError when attempting to purchase non-positive shares', function () {
+    expect(() => Portfolio.purchase(portfolio, "BAYN", -1)).toThrow();
+  });
 })
