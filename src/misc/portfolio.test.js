@@ -51,7 +51,7 @@ describe('a portfolio', () => {
     let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN', 2)
     updatedPortfolio = Portfolio.purchase(updatedPortfolio, 'BAYN', 2)
 
-    expect(Portfolio.countShares(updatedPortfolio)).toEqual(4)
+    expect(Portfolio.countShares(updatedPortfolio, "BAYN")).toEqual(4)
   })
 
 

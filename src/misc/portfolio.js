@@ -5,6 +5,7 @@ export const createPortfolio = () => ({})
 export const isEmpty = portfolio => uniqueSymbolCount(portfolio) === 0
 
 export const purchase = (portfolio, symbol, quantity = 1) => {
+  console.log("portfolio[symbol]", portfolio[symbol])
   if (portfolio[symbol]) {
     let newQuantity = portfolio[symbol].quantity + quantity
     return { ...portfolio, [symbol]: { quantity: newQuantity, purchaseDate: Date.now() } }
