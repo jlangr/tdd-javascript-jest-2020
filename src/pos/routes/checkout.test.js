@@ -187,6 +187,7 @@ describe('checkout routes', () => {
       expect(response.send).toHaveBeenCalledWith({ error: 'nonexistent checkout' })
     })
 
+
     it('applies any member discount', () => {
       scanMember('719-287-4335', 0.25)
       purchase('333', 3.33)
