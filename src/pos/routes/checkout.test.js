@@ -167,22 +167,17 @@ describe('checkout routes', () => {
 
     it('calculates checkout total', () => {
       postCheckout({}, response)
-      overrideRetrieveItem(() => ({ upc: '333', price: 3.33, description: '', exempt: false }))
+      overrideRetrieveItem(() => ({ upc: '333', price: 3, description: '', exempt: false }))
       postItem({ params: { id: checkoutId }, body: { upc: '333' } }, response)
-      overrideRetrieveItem(() => ({ upc: '444', price: 4.44, description: '', exempt: false }))
+      overrideRetrieveItem(() => ({ upc: '444', price: 4, description: '', exempt: false }))
       postItem({ params: { id: checkoutId }, body: { upc: '444' } }, response)
 
       const request = { params: { id: checkoutId }}
       response = createEmptyResponse()
       postCheckoutTotal(request, response)
 
-      function addRoundMoney(arg) {
-        return Math.round( arg*100 ) /100
-
-      }
-
       expect(response.status).toEqual(200)
-      expectResponseSentToMatch(response, { total: roundMoney(3.33) + roundMoney(4.44) })
+      expectResponseSentToMatch(response, { total: 3 + 4 })
     })
 
     it('returns 400 when calculating total for non-existent checkout', () => {
