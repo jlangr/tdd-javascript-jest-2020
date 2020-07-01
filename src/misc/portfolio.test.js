@@ -74,18 +74,12 @@ describe('a portfolio', () => {
 
   it('decrease unique symbol count when all shares of a symbol are sold', () => {
     let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN', 2)
-
-    expect(Portfolio.uniqueSymbolCount(updatedPortfolio)).toEqual(1)
-
     const numberOfSymbols = Portfolio.uniqueSymbolCount(updatedPortfolio)
+    expect(numberOfSymbols).toEqual(1)
 
     updatedPortfolio = Portfolio.sell(updatedPortfolio, 'BAYN', 2)
 
     expect(Portfolio.uniqueSymbolCount(updatedPortfolio)).toBeLessThan(numberOfSymbols)
-
-
-
-
   });
 
 })
