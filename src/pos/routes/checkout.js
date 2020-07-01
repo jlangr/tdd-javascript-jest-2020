@@ -79,10 +79,24 @@ export const postCheckoutTotal = (request, response) => {
   const messages = []
   const discount = checkout.member ? checkout.discount : 0
 
+  const {totalOfDiscountedItems, total, totalSaved} = calculateLineItems(checkout, discount, messages)
+
+  // append total line
+  addFormatMessage(total, messages, "TOTAL")
+  
+  if (totalSaved > 0) {
+    addFormatMessage(totalSaved, messages, "*** You saved:")
+  }
+
+  response.status = 200
+  // send total saved instead
+  response.send({ id: checkoutId, total, totalOfDiscountedItems, messages, totalSaved })
+}
+
+function calculateLineItems(checkout, discount, messages) {
   let totalOfDiscountedItems = 0
   let total = 0
   let totalSaved = 0
-
   checkout.items.forEach(item => {
     let price = item.price
     const isExempt = item.exempt
@@ -121,24 +135,12 @@ export const postCheckoutTotal = (request, response) => {
       messages.push(pad(text, textWidth) + amount)
     }
   })
-
   total = Math.round(total * 100) / 100
-
-  // append total line
-  addFormatMessage(total, messages, "TOTAL")
-  
-  if (totalSaved > 0) {
-    addFormatMessage(totalSaved, messages, "*** You saved:")
-  }
-
   totalOfDiscountedItems = Math.round(totalOfDiscountedItems * 100) / 100
-
   totalSaved = Math.round(totalSaved * 100) / 100
-
-  response.status = 200
-  // send total saved instead
-  response.send({ id: checkoutId, total, totalOfDiscountedItems, messages, totalSaved })
+  return { totalOfDiscountedItems, total, totalSaved }
 }
+
 function addFormatMessage(total, messages, txt) {
   const formattedTotal = checkoutAmountParser(total)
   const formattedTotalWidth = formattedTotal.length
