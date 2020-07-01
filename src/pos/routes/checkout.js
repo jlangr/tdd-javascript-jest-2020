@@ -72,6 +72,7 @@ const discountAmount = (discount, price) => discount * price
 const discountedPrice = (discount, price) => price * (1.0 - discount)
 
 const parseAmount = (price) => parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
+const textWidth = (width)=> LineWidth - width
 
 const itemTotal = (item, {totalOfDiscountedItems, total, totalSaved, discount, messages} ) => {
   let price = item.price
@@ -83,19 +84,14 @@ const itemTotal = (item, {totalOfDiscountedItems, total, totalSaved, discount, m
 
     let text = item.description
     // format percent
-    const amount = parseAmount(price)
-    const amountWidth = amount.length
-
-    let textWidth = LineWidth - amountWidth
-    messages.push(pad(text, textWidth) + amount)
+    messages.push(pad(text, textWidth(amount.length)) + amount)
 
     total += discountedPrice
 
     // discount line
     const discountFormatted = '-' + parseAmount(discountAmount(discount, price))
-    textWidth = LineWidth - discountFormatted.length
     text = `   ${discount * 100}% mbr disc`
-    messages.push(`${pad(text, textWidth)}${discountFormatted}`)
+    messages.push(`${pad(text, textWidth(discountFormatted.length))}${discountFormatted}`)
 
     totalSaved += discountAmount(discount, price)
 
@@ -104,10 +100,7 @@ const itemTotal = (item, {totalOfDiscountedItems, total, totalSaved, discount, m
     total += price
     const text = item.description
     const amount = parseAmount(price )
-    const amountWidth = amount.length
-
-    const textWidth = LineWidth - amountWidth
-    messages.push(pad(text, textWidth) + amount)
+    messages.push(pad(text, textWidth(amount.length)) + amount)
   }
   return {totalOfDiscountedItems, total, totalSaved, discount, messages}
 }
@@ -115,8 +108,7 @@ const itemTotal = (item, {totalOfDiscountedItems, total, totalSaved, discount, m
 function formatMessage(formattedTotal, messages) {
   console.log(`formattedTotal: ${formattedTotal}`)
   const formattedTotalWidth = formattedTotal.length
-  const textWidth = LineWidth - formattedTotalWidth
-  messages.push(pad('*** You saved:', textWidth) + formattedTotal)
+  messages.push(pad('*** You saved:', textWidth(formattedTotalWidth)) + formattedTotal)
 }
 
 export const postCheckoutTotal = (request, response) => {
@@ -148,8 +140,7 @@ export const postCheckoutTotal = (request, response) => {
   // append total line
   const formattedTotal = parseFloat((Math.round(total * 100) / 100).toString()).toFixed(2)
   const formattedTotalWidth = formattedTotal.length
-  const textWidth = LineWidth - formattedTotalWidth
-  messages.push(pad('TOTAL', textWidth) + formattedTotal)
+  messages.push(pad('TOTAL', textWidth(formattedTotalWidth)) + formattedTotal)
 
   if (totalSaved > 0) {
     const formattedTotal = parseFloat((Math.round(totalSaved * 100) / 100).toString()).toFixed(2)
