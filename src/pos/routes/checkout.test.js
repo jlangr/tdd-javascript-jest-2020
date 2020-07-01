@@ -182,10 +182,14 @@ describe('checkout routes', () => {
       const firstCallFirstArg = response.send.mock.calls[0][0]
       expect(firstCallFirstArg).toMatchObject({ total: 7.77 })
       //  not found
+      
+    })
+
+    it('should ', () => {
       postCheckoutTotal({ params: { id: 'unknown' }}, response)
       expect(response.status).toEqual(400)
       expect(response.send).toHaveBeenCalledWith({ error: 'nonexistent checkout' })
-    })
+    });
 
     it('applies any member discount', () => {
       scanMember('719-287-4335', 0.25)
