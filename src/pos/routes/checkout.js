@@ -67,19 +67,23 @@ export const postItem = (request, response) => {
 
 const LineWidth = 45
 
+const discountAmount = (discount, price) => discount * price
+
+const discountedPrice = (discount, price) => price * (1.0 - discount)
+
+const parseAmount = (price) => parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
+
 const itemTotal = (item, {totalOfDiscountedItems, total, totalSaved, discount, messages} ) => {
   let price = item.price
   const isExempt = item.exempt
   if (!isExempt && discount > 0) {
-    const discountAmount = discount * price
-    const discountedPrice = price * (1.0 - discount)
-
+    
     // add into total
-    totalOfDiscountedItems += discountedPrice
+    totalOfDiscountedItems += discountedPrice(discount, price)
 
     let text = item.description
     // format percent
-    const amount = parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
+    const amount = parseAmount(price)
     const amountWidth = amount.length
 
     let textWidth = LineWidth - amountWidth
@@ -88,18 +92,18 @@ const itemTotal = (item, {totalOfDiscountedItems, total, totalSaved, discount, m
     total += discountedPrice
 
     // discount line
-    const discountFormatted = '-' + parseFloat((Math.round(discountAmount * 100) / 100).toString()).toFixed(2)
+    const discountFormatted = '-' + parseAmount(discountAmount(discount, price))
     textWidth = LineWidth - discountFormatted.length
     text = `   ${discount * 100}% mbr disc`
     messages.push(`${pad(text, textWidth)}${discountFormatted}`)
 
-    totalSaved += discountAmount
+    totalSaved += discountAmount(discount, price)
 
   }
   else {
     total += price
     const text = item.description
-    const amount = parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
+    const amount = parseAmount(price )
     const amountWidth = amount.length
 
     const textWidth = LineWidth - amountWidth
