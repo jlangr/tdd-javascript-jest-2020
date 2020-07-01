@@ -160,11 +160,13 @@ describe('checkout routes', () => {
    * Should the checkout totaling code even reside in checkouts.js?
    */
   describe('checkout total', () => {
-    beforeEach(() => response = createEmptyResponse())
-
-    it('does stuff', () => {
+    beforeEach(() => {
+      response = createEmptyResponse()
       IncrementingIdGenerator.reset(checkoutId)
       postCheckout({}, response)
+    })
+
+    it('does stuff', () => {
       overrideRetrieveItem(() => {})
       // set up for discountng
       overrideRetrieveItem(() => ({ upc: '333', price: 3.33, description: '', exempt: false }))
