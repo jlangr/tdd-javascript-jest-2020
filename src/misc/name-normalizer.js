@@ -1,17 +1,41 @@
-// this will likeley prove useful and you won't
+// this will likely prove useful and you won't
 // have to find it on StackOverflow:
 //const numberOfCharactersInString = (s, char) =>
 //  (s.match(new RegExp(char, 'g'))||[]).length;
 
+
 const parts = name => name.split(' ')
 
-const last = name => parts(name)[1]
+const last = nameArray => nameArray[nameArray.length - 1]
 
-const first = name => parts(name)[0]
+const first = nameArray => nameArray[0]
 
-const isMononym = name => parts(name).length === 1
+const isMononym = nameArray => nameArray.length === 1
+
+const hasMiddleName = nameArray => nameArray.length > 2
+
+const reducer = (accumulator, currentValue) => {
+  return accumulator + ' ' + (currentValue.length === 1)
+      ? currentValue
+      : currentValue.slice(0, 1) + "."
+}
+
+const middleInitial = nameArray => {
+  const middleNames = nameArray.slice(1, nameArray.length -1)
+  // return middleNames.reduce(reducer)
+  const initialified = middleNames.reduce(reducer)
+  console.log('***********************')
+  console.log(nameArray)
+  console.log(initialified)
+  return initialified
+}
 
 export const normalize = name => {
-  if (isMononym(name)) return name
-  return `${last(name)}, ${first(name)}`
+  const nameArray = parts(name.trim())
+
+  if (isMononym(nameArray)) return nameArray[0]
+  if (hasMiddleName(nameArray)) {
+    return `${last(nameArray)}, ${first(nameArray)} ${middleInitial(nameArray)}`
+  }
+  return `${last(nameArray)}, ${first(nameArray)}`
 }

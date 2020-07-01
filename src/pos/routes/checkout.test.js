@@ -211,7 +211,7 @@ describe('checkout routes', () => {
       postCheckoutTotal({ params: { id: checkoutId }}, response)
       expectResponseSentToMatch(response, { totalOfDiscountedItems:  3.60 })
       // amount saved
-      IncrementingIdGenerator.reset(1001)
+      IncrementingIdGenerator.reset(checkoutId)
       postCheckout({}, response)
       scanMember('719-287-4335', 0.10)
       purchase('333', 4.00)
@@ -229,7 +229,7 @@ describe('checkout routes', () => {
     })
 
     it('provides 0 total for discounted items when member discount is 0', () => {
-      IncrementingIdGenerator.reset(1001)
+      IncrementingIdGenerator.reset(checkoutId)
       postCheckout({}, createEmptyResponse())
       scanMember('719-287-4335', 0.00)
       purchase('333', 4.00)
