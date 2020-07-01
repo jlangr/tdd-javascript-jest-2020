@@ -107,16 +107,15 @@ function calculateDiscountedItem(discount, price, totalOfDiscountedItems, item, 
   let text = item.description
   // format percent
   const amount = checkoutAmountParser(price)
-  const amountWidth = amount.length
 
-  let textWidth = LineWidth - amountWidth
+  let textWidth = calculateTextWidth(amount.length)
   messages.push(pad(text, textWidth) + amount)
 
   total += discountedPrice
 
   // discount line
   const discountFormatted = '-' + checkoutAmountParser(discountAmount)
-  textWidth = LineWidth - discountFormatted.length
+  textWidth = calculateTextWidth(discountFormatted.length)
   text = `   ${discount * 100}% mbr disc`
   messages.push(`${pad(text, textWidth)}${discountFormatted}`)
 
@@ -160,8 +159,7 @@ function calculateTextWidth(amountWidth) {
 
 function addFormatMessage(total, messages, txt) {
   const formattedTotal = checkoutAmountParser(total)
-  const formattedTotalWidth = formattedTotal.length
-  const textWidth = LineWidth - formattedTotalWidth
+  const textWidth = calculateTextWidth(formattedTotal.length)
   messages.push(pad(txt, textWidth) + formattedTotal)
 }
 
