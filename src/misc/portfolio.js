@@ -1,4 +1,3 @@
-import * as NASDAQ from './NASDAQ'
 export const uniqueSymbolCount = portfolio => Object.keys(portfolio.holdings).length
 
 export const createPortfolio = () => ({ holdings: {} })
@@ -37,5 +36,5 @@ export const sell = (portfolio, symbol, shares) => {
 export const sharesOf = (portfolio, symbol) =>
   !(symbol in portfolio.holdings) ? 0 : portfolio.holdings[symbol]
 
-export const value = (portfolio, stockService=NASDAQ.price) =>
+export const value = (portfolio, stockService) =>
   isEmpty(portfolio) ? 0 : stockService()
