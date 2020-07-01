@@ -67,6 +67,45 @@ export const postItem = (request, response) => {
 
 const LineWidth = 45
 
+const itemTotal = (item, totalOfDiscountedItems, total, totalSaved, discount) => {
+  let price = item.price
+  const isExempt = item.exempt
+  if (!isExempt && discount > 0) {
+    const discountAmount = discount * price
+    const discountedPrice = price * (1.0 - discount)
+
+    // add into total
+    totalOfDiscountedItems += discountedPrice
+
+    let text = item.description
+    // format percent
+    const amount = parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
+    const amountWidth = amount.length
+
+    let textWidth = LineWidth - amountWidth
+    messages.push(pad(text, textWidth) + amount)
+
+    total += discountedPrice
+
+    // discount line
+    const discountFormatted = '-' + parseFloat((Math.round(discountAmount * 100) / 100).toString()).toFixed(2)
+    textWidth = LineWidth - discountFormatted.length
+    text = `   ${discount * 100}% mbr disc`
+    messages.push(`${pad(text, textWidth)}${discountFormatted}`)
+
+    totalSaved += discountAmount
+  }
+  else {
+    total += price
+    const text = item.description
+    const amount = parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
+    const amountWidth = amount.length
+
+    const textWidth = LineWidth - amountWidth
+    messages.push(pad(text, textWidth) + amount)
+  }
+}
+
 export const postCheckoutTotal = (request, response) => {
   const checkoutId = request.params.id
   const checkout = Checkouts.retrieve(checkoutId)
@@ -83,44 +122,7 @@ export const postCheckoutTotal = (request, response) => {
   let total = 0
   let totalSaved = 0
 
-  checkout.items.forEach(item => {
-    let price = item.price
-    const isExempt = item.exempt
-    if (!isExempt && discount > 0) {
-      const discountAmount = discount * price
-      const discountedPrice = price * (1.0 - discount)
-
-      // add into total
-      totalOfDiscountedItems += discountedPrice
-
-      let text = item.description
-      // format percent
-      const amount = parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
-      const amountWidth = amount.length
-
-      let textWidth = LineWidth - amountWidth
-      messages.push(pad(text, textWidth) + amount)
-
-      total += discountedPrice
-
-      // discount line
-      const discountFormatted = '-' + parseFloat((Math.round(discountAmount * 100) / 100).toString()).toFixed(2)
-      textWidth = LineWidth - discountFormatted.length
-      text = `   ${discount * 100}% mbr disc`
-      messages.push(`${pad(text, textWidth)}${discountFormatted}`)
-
-      totalSaved += discountAmount
-    }
-    else {
-      total += price
-      const text = item.description
-      const amount = parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
-      const amountWidth = amount.length
-
-      const textWidth = LineWidth - amountWidth
-      messages.push(pad(text, textWidth) + amount)
-    }
-  })
+  checkout.items.forEach(item => itemTotal(item, totalOfDiscountedItems, total, totalSaved, discount))
 
   total = Math.round(total * 100) / 100
 
