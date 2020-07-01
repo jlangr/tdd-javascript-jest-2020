@@ -124,14 +124,16 @@ function calculateDiscountedItem(discount, price, totalOfDiscountedItems, item, 
   return {totalOfDiscountedItems, total, totalSaved};
 }
 
+const ZERO = 0
+
 function calculateLineItems(checkout, discount, messages) {
-  let totalOfDiscountedItems = 0
-  let total = 0
-  let totalSaved = 0
+  let totalOfDiscountedItems = ZERO
+  let total = ZERO
+  let totalSaved = ZERO
   checkout.items.forEach(item => {
     let price = item.price
     const isExempt = item.exempt
-    if (!isExempt && discount > 0) {
+    if (!isExempt && discount > ZERO) {
       const discountedCalculationResult = calculateDiscountedItem(discount, price, totalOfDiscountedItems, item, messages, total, totalSaved);
       totalOfDiscountedItems = discountedCalculationResult.totalOfDiscountedItems;
       total = discountedCalculationResult.total;
@@ -141,9 +143,8 @@ function calculateLineItems(checkout, discount, messages) {
       total += price
       const text = item.description
       const amount = checkoutAmountParser(price)
-      const amountWidth = amount.length
 
-      const textWidth = LineWidth - amountWidth
+      const textWidth = calculateTextWidth(amount.length)
       messages.push(pad(text, textWidth) + amount)
     }
   })
@@ -151,6 +152,10 @@ function calculateLineItems(checkout, discount, messages) {
   totalOfDiscountedItems = roundToCurrencyPrecision(totalOfDiscountedItems)
   totalSaved = roundToCurrencyPrecision(totalSaved)
   return { totalOfDiscountedItems, total, totalSaved }
+}
+
+function calculateTextWidth(amountWidth) {
+  return LineWidth - amountWidth
 }
 
 function addFormatMessage(total, messages, txt) {
