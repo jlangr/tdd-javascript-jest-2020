@@ -57,4 +57,19 @@ describe('a portfolio', () => {
   it('should throw RangeError when attempting to purchase non-positive shares', function () {
     expect(() => Portfolio.purchase(portfolio, "BAYN", -1)).toThrow();
   });
+
+  // decrease shares when sold
+  it('decrease quantity when shares are sold', () => {
+    let updatedPortfolio = Portfolio.purchase(portfolio, 'BAYN', 2)
+    updatedPortfolio = Portfolio.sell(updatedPortfolio, 'BAYN', 1)
+
+    expect(Portfolio.countShares(updatedPortfolio, "BAYN")).toEqual(1)
+  });
+
+  // throw error when selling more shares than available
+  it('should ', () => {
+    
+  });
+
+  // decrease unique symbol count when all shares of a symbol are sold
 })

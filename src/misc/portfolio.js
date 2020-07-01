@@ -16,4 +16,9 @@ export const purchase = (portfolio, symbol, quantity) => {
   }
 }
 
+export const sell = (portfolio, symbol, quantity) => {
+  let newQuantity = portfolio[symbol].quantity - quantity
+  return { ...portfolio, [symbol]: { quantity: newQuantity } }
+}
+
 export const countShares = (portfolio, symbol) => (portfolio[symbol]) ? portfolio[symbol].quantity : 0
