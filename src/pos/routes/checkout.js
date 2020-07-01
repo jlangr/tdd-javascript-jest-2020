@@ -93,6 +93,37 @@ export const postCheckoutTotal = (request, response) => {
   response.send({ id: checkoutId, total, totalOfDiscountedItems, messages, totalSaved })
 }
 
+function roundToCurrencyPrecision(total) {
+  return Math.round(total * 100) / 100;
+}
+
+function calculateDiscountedItem(discount, price, totalOfDiscountedItems, item, messages, total, totalSaved) {
+  const discountAmount = discount * price
+  const discountedPrice = price * (1.0 - discount)
+
+  // add into total
+  totalOfDiscountedItems += discountedPrice
+
+  let text = item.description
+  // format percent
+  const amount = checkoutAmountParser(price)
+  const amountWidth = amount.length
+
+  let textWidth = LineWidth - amountWidth
+  messages.push(pad(text, textWidth) + amount)
+
+  total += discountedPrice
+
+  // discount line
+  const discountFormatted = '-' + checkoutAmountParser(discountAmount)
+  textWidth = LineWidth - discountFormatted.length
+  text = `   ${discount * 100}% mbr disc`
+  messages.push(`${pad(text, textWidth)}${discountFormatted}`)
+
+  totalSaved += discountAmount
+  return {totalOfDiscountedItems, total, totalSaved};
+}
+
 function calculateLineItems(checkout, discount, messages) {
   let totalOfDiscountedItems = 0
   let total = 0
@@ -101,29 +132,10 @@ function calculateLineItems(checkout, discount, messages) {
     let price = item.price
     const isExempt = item.exempt
     if (!isExempt && discount > 0) {
-      const discountAmount = discount * price
-      const discountedPrice = price * (1.0 - discount)
-
-      // add into total
-      totalOfDiscountedItems += discountedPrice
-
-      let text = item.description
-      // format percent
-      const amount = checkoutAmountParser(price)
-      const amountWidth = amount.length
-
-      let textWidth = LineWidth - amountWidth
-      messages.push(pad(text, textWidth) + amount)
-
-      total += discountedPrice
-
-      // discount line
-      const discountFormatted = '-' + checkoutAmountParser(discountAmount)
-      textWidth = LineWidth - discountFormatted.length
-      text = `   ${discount * 100}% mbr disc`
-      messages.push(`${pad(text, textWidth)}${discountFormatted}`)
-
-      totalSaved += discountAmount
+      const discountedCalculationResult = calculateDiscountedItem(discount, price, totalOfDiscountedItems, item, messages, total, totalSaved);
+      totalOfDiscountedItems = discountedCalculationResult.totalOfDiscountedItems;
+      total = discountedCalculationResult.total;
+      totalSaved = discountedCalculationResult.totalSaved;
     }
     else {
       total += price
@@ -135,9 +147,9 @@ function calculateLineItems(checkout, discount, messages) {
       messages.push(pad(text, textWidth) + amount)
     }
   })
-  total = Math.round(total * 100) / 100
-  totalOfDiscountedItems = Math.round(totalOfDiscountedItems * 100) / 100
-  totalSaved = Math.round(totalSaved * 100) / 100
+  total = roundToCurrencyPrecision(total)
+  totalOfDiscountedItems = roundToCurrencyPrecision(totalOfDiscountedItems)
+  totalSaved = roundToCurrencyPrecision(totalSaved)
   return { totalOfDiscountedItems, total, totalSaved }
 }
 
@@ -149,6 +161,6 @@ function addFormatMessage(total, messages, txt) {
 }
 
 function checkoutAmountParser(price) {
-  return parseFloat((Math.round(price * 100) / 100).toString()).toFixed(2)
+  return parseFloat(roundToCurrencyPrecision(price).toString()).toFixed(2)
 }
 
