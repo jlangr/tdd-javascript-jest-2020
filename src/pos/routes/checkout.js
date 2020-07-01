@@ -131,7 +131,13 @@ export const postCheckoutTotal = (request, response) => {
   let total = 0
   let totalSaved = 0
 
-  checkout.items.forEach(item => {{totalOfDiscountedItems, total, totalSaved, discount, messages} = itemTotal(item, {totalOfDiscountedItems, total, totalSaved, discount, messages})})
+  checkout.items.forEach(item => {
+    // {totalOfDiscountedItems, total, totalSaved, discount, messages} = itemTotal(item, {totalOfDiscountedItems, total, totalSaved, discount, messages})
+    const obj = itemTotal(item, {totalOfDiscountedItems, total, totalSaved, discount, messages})
+    totalOfDiscountedItems = obj.totalOfDiscountedItems
+    total = obj.total
+    totalSaved = obj.totalSaved
+  })
 
   total = Math.round(total * 100) / 100
 
