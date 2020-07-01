@@ -131,7 +131,9 @@ describe('a portfolio', () => {
     it('share price on multiple holdings', () => {
       const stockLookupFunction = _symbol => _symbol === "BAYN" ? BAYER_CURRENT_VALUE : APPLE_CURRENT_VALUE
       let updatedPortfolio = Portfolio.purchase(portfolio, BAYER, 1)
-      updatedPortfolio = Portfolio.purchase(portfolio, APPLE, 1)
+      updatedPortfolio = Portfolio.purchase(updatedPortfolio, APPLE, 1)
+
+      expect(Portfolio.value(updatedPortfolio, stockLookupFunction)).toEqual(BAYER_CURRENT_VALUE + APPLE_CURRENT_VALUE)
 
     })
   })
