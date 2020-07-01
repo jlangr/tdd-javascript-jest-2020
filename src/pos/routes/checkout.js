@@ -106,8 +106,7 @@ const itemTotal = (item, totalOfDiscountedItems, total, totalSaved, discount, me
   }
 }
 
-const formatMessage=(totalSaved, messages, formattedTotal)=> {
-
+function formatMessage(formattedTotal, messages) {
   console.log(`formattedTotal: ${formattedTotal}`)
   const formattedTotalWidth = formattedTotal.length
   const textWidth = LineWidth - formattedTotalWidth
@@ -142,7 +141,7 @@ export const postCheckoutTotal = (request, response) => {
 
   if (totalSaved > 0) {
     const formattedTotal = parseFloat((Math.round(totalSaved * 100) / 100).toString()).toFixed(2)
-    formatMessage(totalSaved, messages, formattedTotal)
+    formatMessage(formattedTotal, messages);
   }
 
   totalOfDiscountedItems = Math.round(totalOfDiscountedItems * 100) / 100
